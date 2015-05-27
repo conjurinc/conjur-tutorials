@@ -1,3 +1,7 @@
+#!/bin/bash
+
+set -o xtrace
+
 if [ -z "$CONJURRC" ]; then
     echo "Using CONJURRC from ~/.conjurrc" >&2
     CONJURRC=~/.conjurrc
@@ -22,7 +26,7 @@ chmod a+x my_conjur_env.sh
 . ./my_conjur_env.sh
 
 export CONJUR_LDAP_POLICY=$CONJUR_COLLECTION/ldap-$CONJUR_POLICY_VERSION
-export TOMCAT_HOST=$CONJUR_LDAP_POLICY/tomcat
+export TOMCAT_HOST=tomcat.$CONJUR_COLLECTION-$CONJUR_POLICY_VERSION.example.com
 
 #update the file with the tomcat host
 
@@ -30,11 +34,14 @@ echo 'export TOMCAT_HOST=\' >> my_conjur_env.sh
 echo $TOMCAT_HOST >> my_conjur_env.sh
 
 echo "Creating the host..."
-
-conjur host create $CONJUR_LDAP_POLICY/tomcat | tee tomcat.json
+# Why do this?, it will be done by policy
+conjur host create $TOMCAT_HOST | tee tomcat.json
 
 echo "Creating objects...."
 conjur policy load --as-group security_admin --collection $CONJUR_COLLECTION --context ldap.json ldap.rb 
+
+echo "Adding host to layer..."
+conjur layer hosts add $CONJUR_LDAP_POLICY/tomcats $TOMCAT_HOST
 
 echo Dashed Version=$CONJUR_POLICY_VERSION_DASHED
 
@@ -51,7 +58,7 @@ chmod a+x my_keys.sh
 
 echo "Creating LDAP Configuration"
 
-echo URI https://$CONJUR_HOST >> my_ldap.conf
+echo URI ldaps://$CONJUR_HOST >> my_ldap.conf
 echo TLS_CERT /etc/conjur-$(echo $CONJUR_ACCOUNT).pem >> my_ldap.conf
 echo TLS_REQCERT demand >> my_ldap.conf
 
