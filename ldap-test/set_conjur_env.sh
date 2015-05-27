@@ -1,7 +1,12 @@
+if [ -z "$CONJURRC" ]; then
+    echo "Using CONJURRC from ~/.conjurrc" >&2
+    CONJURRC=~/.conjurrc
+fi
+
 echo 'export CONJUR_HOST=\' >> my_conjur_env.sh
-cat ~/.conjurrc | grep appliance | cut -d/ -f3 >> my_conjur_env.sh
+cat $CONJURRC | grep appliance | cut -d/ -f3 >> my_conjur_env.sh
 echo 'export CONJUR_ACCOUNT=\' >> my_conjur_env.sh
-cat ~/.conjurrc | grep account| cut -d' ' -f2 >> my_conjur_env.sh
+conjur authn whoami | jsonfield account >> my_conjur_env.sh
 echo 'export CONJUR_POLICY_VERSION=\' >> my_conjur_env.sh
 cat policy.json | jsonfield version >> my_conjur_env.sh
 echo 'export CONJUR_POLICY_VERSION_DASHED=\' >> my_conjur_env.sh
