@@ -130,6 +130,8 @@
 <Realm
         className="org.apache.catalina.realm.JNDIRealm"
         connectionURL="ldaps://${conjur.host}"
+        connectionName="uid=${tomcat.host},ou=host,host=${tomcat.host},account=${conjur.account},o=conjur"
+        connectionPassword="${tomcat.api_key}"
         userBase="ou=user,host=${tomcat.host},account=${conjur.account},o=conjur"
         userSearch="(uid={0})"
         userSubtree="true"

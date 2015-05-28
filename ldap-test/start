@@ -6,7 +6,8 @@ source /conjurize.sh
 
 echo 'y' | keytool -importcert -keystore /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/security/cacerts -storepass changeit -file /etc/conjur-$CONJUR_ACCOUNT.pem
 
-export JAVA_OPTS=$(echo -Dtomcat.host=$TOMCAT_HOST -Dconjur.account=$CONJUR_ACCOUNT -Dconjur.host=$CONJUR_HOST)
+export TOMCAT_API_KEY=$(cat /etc/conjur.identity | grep password | sed -e 's/  password //')
+export JAVA_OPTS=$(echo -Dtomcat.host=$TOMCAT_HOST -Dtomcat.api_key=$TOMCAT_API_KEY -Dconjur.account=$CONJUR_ACCOUNT -Dconjur.host=$CONJUR_HOST)
 
 echo $JAVA_OPTS
 
