@@ -135,11 +135,6 @@
         userBase="ou=user,host=${tomcat.host},account=${conjur.account},o=conjur"
         userSearch="(uid={0})"
         userSubtree="true"
-        roleBase="ou=group,host=${tomcat.host},account=${conjur.account},o=conjur"
-        roleName="CN"
-        roleSearch="(memberUid={0})"
-        roleSubtree="true"
-        roleNested="true"
         debug="9" />
 
 
